@@ -73,9 +73,9 @@ function AdvancedSelection({
   setPercentile,
   setSelectedSorting,
   setFilter,
-  filteredValidators,
+  filteredcollators,
   handleValidatorCheck,
-  selectedValidators,
+  selectedcollators,
   handleRangeConfirm,
 }) {
   return (
@@ -123,13 +123,13 @@ function AdvancedSelection({
               </Tr>
             </Thead>
             <Tbody>
-              {filteredValidators.map(
+              {filteredcollators.map(
                 ({ operator_address, description, tokens, commission }) => (
                   <Tr
                     key={operator_address}
                     onClick={() => handleValidatorCheck(operator_address)}
                     className={
-                      selectedValidators.includes(operator_address)
+                      selectedcollators.includes(operator_address)
                         ? styles.selected
                         : undefined
                     }
@@ -154,7 +154,7 @@ function AdvancedSelection({
         </TableContainer>
         <VStack pt=".5rem" pb="0.5rem">
           <Text className={styles.subtitle3}>
-            Select validators by percentile range
+            Select collators by percentile range
           </Text>
           <RangeSelection
             percentile={percentile}

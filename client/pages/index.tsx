@@ -23,7 +23,7 @@ import {
 import { useCallback, useEffect, useState } from "react";
 import { ethers } from "ethers";
 import MultiStaker from "@data/MultiStaker.json";
-import validatorsMap from "@data/validatorsMap.json";
+import collatorsMap from "@data/collatorsMap.json";
 import { useModal } from "connectkit";
 import { useRouter } from "next/router";
 import { useToast } from "@chakra-ui/react";
@@ -33,23 +33,23 @@ function Home() {
   const router = useRouter();
   const { setOpen } = useModal();
   const { data: signer } = useSigner();
-  const [selectedValidators, setSelectedValidators] = useState<string[]>([]);
-  const [delegatedValidators, setDelegatedValidators] = useState<any[]>([]);
+  const [selectedCollators, setSelectedCollators] = useState<string[]>([]);
+  const [delegatedCollators, setDelegatedCollators] = useState<any[]>([]);
   const [delegationsMap, setDelegationsMap] = useState<any>({});
   const [isLoading, setIsLoading] = useState(true);
   const toast = useToast();
 
   const handleValidatorCheck = (operator_address: string) => {
-    if (selectedValidators.includes(operator_address)) {
-      setSelectedValidators(
-        selectedValidators.filter((item) => item !== operator_address)
+    if (selectedCollators.includes(operator_address)) {
+      setSelectedCollators(
+        selectedCollators.filter((item) => item !== operator_address)
       );
     } else {
-      setSelectedValidators([...selectedValidators, operator_address]);
+      setSelectedCollators([...selectedCollators, operator_address]);
     }
   };
 
-  const fetchValidators = useCallback(async () => {
+  const fetchCollators = useCallback(async () => {
     try {
       const contract = new ethers.Contract(
         "0x02a85c9E6D859eAFAC44C3c7DD52Bbe787e54d0A",
@@ -57,9 +57,9 @@ function Home() {
         signer
       );
       const contractWithSigner = contract.connect(signer);
-      const result = await contractWithSigner.getDelegatorValidators();
-      const fetchedValidators = result.map((v) => validatorsMap[v]);
-      setDelegatedValidators(fetchedValidators);
+      const result = await contractWithSigner.getDelegatorCollators();
+      const fetchedCollators = result.map((v) => CollatorsMap[v]);
+      setDelegatedCollators(fetchedCollators);
     } catch (e) {
       console.log(e);
     }
@@ -76,26 +76,26 @@ function Home() {
       const contractWithSigner = contract.connect(signer);
 
       const tempMap = {};
-      for (let i = 0; i < delegatedValidators.length; i++) {
+      for (let i = 0; i < delegatedCollators.length; i++) {
         const result = await contractWithSigner.getDelegation(
-          delegatedValidators[i].operator_address
+          delegatedCollators[i].operator_address
         );
         const formattedResult = ethers.utils.formatUnits(result[1][1], 18);
-        tempMap[delegatedValidators[i].operator_address] = formattedResult;
+        tempMap[delegatedCollators[i].operator_address] = formattedResult;
       }
       setDelegationsMap(tempMap);
     } catch (e) {
       console.log(e);
     }
-  }, [delegatedValidators, signer]);
+  }, [delegatedCollators, signer]);
 
   const { config: unstakeConfig } = usePrepareContractWrite({
     address: process.env.NEXT_PUBLIC_CONTRACT_ADDRESS as any,
     abi: MultiStaker.abi,
     functionName: "unstakeTokens",
     args: [
-      selectedValidators,
-      selectedValidators.map((v) => ethers.utils.parseEther(delegationsMap[v])),
+      selectedCollators,
+      selectedCollators.map((v) => ethers.utils.parseEther(delegationsMap[v])),
     ],
   });
 
@@ -107,7 +107,7 @@ function Home() {
   } = useContractWrite(unstakeConfig);
 
   const handleUnstakeTokens = useCallback(() => {
-    if (selectedValidators.length === 0) {
+    if (selectedCollators.length === 0) {
       toast({
         position: "bottom",
         render: () => (
@@ -119,13 +119,13 @@ function Home() {
     } else {
       unstake?.();
     }
-  }, [selectedValidators.length, toast, unstake]);
+  }, [selectedCollators.length, toast, unstake]);
 
   const { config: withdrawConfig } = usePrepareContractWrite({
     address: process.env.NEXT_PUBLIC_CONTRACT_ADDRESS as any,
     abi: MultiStaker.abi,
     functionName: "withdrawRewards",
-    args: [selectedValidators],
+    args: [selectedCollators],
   });
 
   const {
@@ -137,7 +137,7 @@ function Home() {
 
   // TODO: implement better unstake and withdraw flow
   const handleWithdrawRewards = useCallback(() => {
-    // if (selectedValidators.length === 0) {
+    // if (selectedCollators.length === 0) {
     toast({
       position: "bottom",
       render: () => (
@@ -183,14 +183,14 @@ function Home() {
   }, []);
 
   useEffect(() => {
-    fetchValidators();
+    fetchCollators();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [signer]);
 
   useEffect(() => {
     fetchDelegation();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [delegatedValidators]);
+  }, [delegatedCollators]);
 
   if (!address.address) {
     return (
@@ -219,7 +219,7 @@ function Home() {
             <VStack h="480px" justifyContent="center">
               <Spinner size="lg" />
             </VStack>
-          ) : delegatedValidators && delegatedValidators.length > 0 ? (
+          ) : delegatedCollators && delegatedCollators.length > 0 ? (
             <TableContainer height="480px" overflowY="scroll">
               <Table variant="simple">
                 <Thead>
@@ -230,9 +230,9 @@ function Home() {
                   </Tr>
                 </Thead>
                 <Tbody>
-                  {delegatedValidators &&
+                  {delegatedCollators &&
                     Object.keys(delegationsMap).length > 0 &&
-                    delegatedValidators
+                    delegatedCollators
                       .filter(
                         (v) =>
                           Number(delegationsMap[v.operator_address]) > 0.0001
@@ -242,7 +242,7 @@ function Home() {
                           key={operator_address}
                           onClick={() => handleValidatorCheck(operator_address)}
                           className={
-                            selectedValidators.includes(operator_address)
+                            selectedCollators.includes(operator_address)
                               ? styles.selected
                               : undefined
                           }

@@ -17,8 +17,8 @@ import {
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { BigNumber, ethers } from "ethers";
 import MultiStaker from "@data/MultiStaker.json";
-import validators from "@data/validators.json";
-import validatorsMap from "@data/validatorsMap.json";
+import collators from "@data/collators.json";
+import collatorsMap from "@data/collatorsMap.json";
 import { useModal } from "connectkit";
 import AdvancedSelection from "@components/AdvancedSelection";
 import ProgressBar from "@components/ProgressBar";
@@ -37,15 +37,15 @@ function Home() {
   const router = useRouter();
   const { data: signer } = useSigner();
   const [amount, setAmount] = useState("");
-  const [numValidators, setNumValidators] = useState();
-  const [selectedValidators, setSelectedValidators] = useState<string[]>([]);
-  const [delegatedValidators, setDelegatedValidators] = useState<any[]>([]);
+  const [numcollators, setNumcollators] = useState();
+  const [selectedcollators, setSelectedcollators] = useState<string[]>([]);
+  const [delegatedcollators, setDelegatedcollators] = useState<any[]>([]);
   const [delegationsMap, setDelegationsMap] = useState<any>({});
   const [selectedGroup, setSelectedGroup] = useState("");
   const [percentile, setPercentile] = useState([25, 75]);
   const [selectedSorting, setSelectedSorting] = useState("desc_tokens");
-  const [sortedValidators, setSortedValidators] = useState(validators);
-  const [filteredValidators, setFilteredValidators] = useState(validators);
+  const [sortedcollators, setSortedcollators] = useState(collators);
+  const [filteredcollators, setFilteredcollators] = useState(collators);
   const [filter, setFilter] = useState("");
   const [currentStep, setCurrentStep] = useState(0);
   const [error, setError] = useState("");
@@ -59,40 +59,40 @@ function Home() {
 
   const handleValidatorCheck = useCallback(
     (operator_address: string) => {
-      if (selectedValidators.includes(operator_address)) {
-        setSelectedValidators(
-          selectedValidators.filter((item) => item !== operator_address)
+      if (selectedcollators.includes(operator_address)) {
+        setSelectedcollators(
+          selectedcollators.filter((item) => item !== operator_address)
         );
       } else {
-        setSelectedValidators([...selectedValidators, operator_address]);
+        setSelectedcollators([...selectedcollators, operator_address]);
       }
     },
-    [selectedValidators]
+    [selectedcollators]
   );
 
   const handleSelectedGroupChange = useCallback(
     (group) => {
       setSelectedGroup(group);
       let selected;
-      const num = Number(numValidators);
+      const num = Number(numcollators);
       switch (group) {
         case "top":
-          selected = sortedValidators.slice(0, num);
+          selected = sortedcollators.slice(0, num);
           break;
         case "median":
-          const middle = Math.floor(sortedValidators.length / 2);
+          const middle = Math.floor(sortedcollators.length / 2);
           const start = Math.max(middle - Math.floor(num / 2), 0);
-          selected = sortedValidators.slice(start, start + num);
+          selected = sortedcollators.slice(start, start + num);
           break;
         case "bottom":
-          selected = sortedValidators.slice(-num);
+          selected = sortedcollators.slice(-num);
           break;
         case "random":
           selected = [];
           while (selected.length < num) {
             const randomValidator =
-              sortedValidators[
-                Math.floor(Math.random() * sortedValidators.length)
+              sortedcollators[
+                Math.floor(Math.random() * sortedcollators.length)
               ];
             if (!selected.includes(randomValidator)) {
               selected.push(randomValidator);
@@ -102,34 +102,34 @@ function Home() {
         default:
           selected = [];
       }
-      setSelectedValidators(
+      setSelectedcollators(
         selected.map((validator) => validator.operator_address)
       );
     },
-    [numValidators, sortedValidators]
+    [numcollators, sortedcollators]
   );
 
   const handleRangeConfirm = useCallback(() => {
-    if (!numValidators) return;
-    const start = Math.floor((sortedValidators.length * percentile[0]) / 100);
-    const end = Math.floor((sortedValidators.length * percentile[1]) / 100);
-    const rangeValidators = sortedValidators.slice(start, end);
+    if (!numcollators) return;
+    const start = Math.floor((sortedcollators.length * percentile[0]) / 100);
+    const end = Math.floor((sortedcollators.length * percentile[1]) / 100);
+    const rangecollators = sortedcollators.slice(start, end);
 
     let selected = [];
-    while (selected.length < numValidators) {
+    while (selected.length < numcollators) {
       const randomValidator =
-        rangeValidators[Math.floor(Math.random() * rangeValidators.length)];
+        rangecollators[Math.floor(Math.random() * rangecollators.length)];
       if (!selected.includes(randomValidator)) {
         selected.push(randomValidator);
       }
     }
-    setSelectedValidators(
+    setSelectedcollators(
       selected.map((validator) => validator.operator_address)
     );
-  }, [numValidators, percentile, sortedValidators]);
+  }, [numcollators, percentile, sortedcollators]);
 
-  const dividedAmount = selectedValidators.length
-    ? ethers.utils.parseEther(amount).div(selectedValidators.length)
+  const dividedAmount = selectedcollators.length
+    ? ethers.utils.parseEther(amount).div(selectedcollators.length)
     : ethers.utils.parseEther("0");
 
   const fetchAllowance = useCallback(async () => {
@@ -173,8 +173,8 @@ function Home() {
     abi: MultiStaker.abi,
     functionName: "stakeTokens",
     args: [
-      selectedValidators,
-      Array(selectedValidators.length).fill(dividedAmount),
+      selectedcollators,
+      Array(selectedcollators.length).fill(dividedAmount),
     ],
   });
 
@@ -185,7 +185,7 @@ function Home() {
     write: stake,
   } = useContractWrite(stakeConfig);
 
-  const fetchValidators = useCallback(async () => {
+  const fetchcollators = useCallback(async () => {
     try {
       const contract = new ethers.Contract(
         "0x02a85c9E6D859eAFAC44C3c7DD52Bbe787e54d0A",
@@ -193,9 +193,9 @@ function Home() {
         signer
       );
       const contractWithSigner = contract.connect(signer);
-      const result = await contractWithSigner.getDelegatorValidators();
-      const fetchedValidators = result.map((v) => validatorsMap[v]);
-      setDelegatedValidators(fetchedValidators);
+      const result = await contractWithSigner.getDelegatorcollators();
+      const fetchedcollators = result.map((v) => collatorsMap[v]);
+      setDelegatedcollators(fetchedcollators);
     } catch (e) {
       console.log(e);
     }
@@ -212,18 +212,18 @@ function Home() {
       const contractWithSigner = contract.connect(signer);
 
       const tempMap = {};
-      for (let i = 0; i < delegatedValidators.length; i++) {
+      for (let i = 0; i < delegatedcollators.length; i++) {
         const result = await contractWithSigner.getDelegation(
-          delegatedValidators[i].operator_address
+          delegatedcollators[i].operator_address
         );
         const formattedResult = ethers.utils.formatUnits(result[1][1], 18);
-        tempMap[delegatedValidators[i].operator_address] = formattedResult;
+        tempMap[delegatedcollators[i].operator_address] = formattedResult;
       }
       setDelegationsMap(tempMap);
     } catch (e) {
       console.log(e);
     }
-  }, [delegatedValidators, signer]);
+  }, [delegatedcollators, signer]);
 
   const userNeedsApproval = useMemo(() => {
     return allowance && allowance.isZero() && !approved;
@@ -231,41 +231,41 @@ function Home() {
 
   useEffect(() => {
     if (selectedSorting === "asc_comm") {
-      const sorted = [...validators].sort(
+      const sorted = [...collators].sort(
         (a, b) =>
           Number(a.commission.commission_rates.rate) -
           Number(b.commission.commission_rates.rate)
       );
-      setSortedValidators(sorted);
+      setSortedcollators(sorted);
     } else if (selectedSorting === "asc_tokens") {
-      const sorted = [...validators].sort(
+      const sorted = [...collators].sort(
         (a, b) => Number(a.tokens) - Number(b.tokens)
       );
-      setSortedValidators(sorted);
+      setSortedcollators(sorted);
     } else if (selectedSorting === "desc_comm") {
-      const sorted = [...validators].sort(
+      const sorted = [...collators].sort(
         (a, b) =>
           Number(b.commission.commission_rates.rate) -
           Number(a.commission.commission_rates.rate)
       );
-      setSortedValidators(sorted);
+      setSortedcollators(sorted);
     } else {
-      const sorted = [...validators].sort(
+      const sorted = [...collators].sort(
         (a, b) => Number(b.tokens) - Number(a.tokens)
       );
-      setSortedValidators(sorted);
+      setSortedcollators(sorted);
     }
   }, [selectedSorting]);
 
   useEffect(() => {
     if (filter === "jail") {
-      setFilteredValidators(
-        sortedValidators.filter((validator) => !validator.jailed)
+      setFilteredcollators(
+        sortedcollators.filter((validator) => !validator.jailed)
       );
     } else {
-      setFilteredValidators(sortedValidators);
+      setFilteredcollators(sortedcollators);
     }
-  }, [filter, sortedValidators]);
+  }, [filter, sortedcollators]);
 
   useEffect(() => {
     fetchAllowance();
@@ -273,14 +273,14 @@ function Home() {
   }, [signer]);
 
   useEffect(() => {
-    fetchValidators();
+    fetchcollators();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [signer]);
 
   useEffect(() => {
     fetchDelegation();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [delegatedValidators]);
+  }, [delegatedcollators]);
 
   const goHome = () => router.push("/");
   const goBack = () => {
@@ -295,13 +295,13 @@ function Home() {
       setError(`You must stake at least 0.001 EVMOS.`);
       return;
     }
-    if (currentStep === 1 && (error || !numValidators)) {
+    if (currentStep === 1 && (error || !numcollators)) {
       setError(
-        `Input must be greater than 0 and less than or equal to ${validators.length}.`
+        `Input must be greater than 0 and less than or equal to ${collators.length}.`
       );
       return;
     }
-    if (currentStep === 2 && (error || selectedValidators.length === 0)) {
+    if (currentStep === 2 && (error || selectedcollators.length === 0)) {
       setError(`You must select at least one validator.`);
       return;
     }
@@ -316,8 +316,8 @@ function Home() {
           amount={amount}
           fiatAmount={fiatAmount}
           fontSize={fontSize}
-          validatorsMap={validatorsMap}
-          selectedValidators={selectedValidators}
+          collatorsMap={collatorsMap}
+          selectedcollators={selectedcollators}
         />
       );
     }
@@ -339,9 +339,9 @@ function Home() {
       case 1:
         return (
           <ValidatorInput
-            numValidators={numValidators}
-            setNumValidators={setNumValidators}
-            maxValidators={validators.length}
+            numcollators={numcollators}
+            setNumcollators={setNumcollators}
+            maxcollators={collators.length}
             setError={setError}
           />
         );
@@ -357,9 +357,9 @@ function Home() {
             setPercentile={setPercentile}
             setSelectedSorting={setSelectedSorting}
             setFilter={setFilter}
-            filteredValidators={filteredValidators}
+            filteredcollators={filteredcollators}
             handleValidatorCheck={handleValidatorCheck}
-            selectedValidators={selectedValidators}
+            selectedcollators={selectedcollators}
             handleRangeConfirm={handleRangeConfirm}
           />
         );
@@ -369,8 +369,8 @@ function Home() {
             amount={amount}
             fiatAmount={fiatAmount}
             fontSize={fontSize}
-            validatorsMap={validatorsMap}
-            selectedValidators={selectedValidators}
+            collatorsMap={collatorsMap}
+            selectedcollators={selectedcollators}
           />
         );
     }
@@ -378,7 +378,7 @@ function Home() {
     amount,
     currentStep,
     fiatAmount,
-    filteredValidators,
+    filteredcollators,
     fontSize,
     handleRangeConfirm,
     handleSelectedGroupChange,
@@ -386,10 +386,10 @@ function Home() {
     inputWidth,
     isAdvancedSelection,
     isStakeSuccess,
-    numValidators,
+    numcollators,
     percentile,
     selectedGroup,
-    selectedValidators,
+    selectedcollators,
   ]);
 
   if (!address.address) {

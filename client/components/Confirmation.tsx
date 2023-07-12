@@ -24,11 +24,11 @@ function Confirmation({
   amount,
   fiatAmount,
   fontSize,
-  validatorsMap,
-  selectedValidators,
+  collatorsMap,
+  selectedCollators,
 }) {
-  const selectedValidatorObjects = selectedValidators.map(
-    (s) => validatorsMap[s]
+  const selectedValidatorObjects = selectedCollators.map(
+    (s) => collatorsMap[s]
   );
 
   return (
@@ -40,7 +40,7 @@ function Confirmation({
             className={styles.amountInputUnit}
             style={{ fontSize: `${fontSize.split("px")[0] - 12}px` }}
           >
-            {amount} EVMOS
+            {amount} DEV
           </Text>
         </HStack>
         <Text className={styles.fiatAmountInputUnitText}>
@@ -72,7 +72,7 @@ function Confirmation({
                   </Td>
                   <Td>
                     <div style={{ width: "80px", overflow: "hidden" }}>
-                      {(Number(amount) / selectedValidators.length).toFixed(4)}
+                      {(Number(amount) / selectedCollators.length).toFixed(4)}
                     </div>
                   </Td>
                   <Td isNumeric>
