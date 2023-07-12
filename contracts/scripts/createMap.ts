@@ -5,20 +5,20 @@ interface Validator {
   [key: string]: any;
 }
 
-// Load validators JSON file
-const rawJson = fs.readFileSync("./data/validators.json", "utf-8");
+// Load collators JSON file
+const rawJson = fs.readFileSync("./data/collators.json", "utf-8");
 const data = JSON.parse(rawJson);
 
 // Create a new map object
-const validatorsMap: Record<string, Validator> = {};
+const collatorsMap: Record<string, Validator> = {};
 
 // Populate the map object
-data.validators.forEach((validator: Validator) => {
-  validatorsMap[validator.operator_address] = validator;
+data.collators.forEach((validator: Validator) => {
+  collatorsMap[validator.operator_address] = validator;
 });
 
 // Save the map to a new JSON file
 fs.writeFileSync(
-  "./data/validatorsMap.json",
-  JSON.stringify(validatorsMap, null, 2)
+  "./data/collatorsMap.json",
+  JSON.stringify(collatorsMap, null, 2)
 );

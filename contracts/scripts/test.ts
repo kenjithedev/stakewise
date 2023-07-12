@@ -10,11 +10,11 @@ async function sleep(ms: number) {
 
 async function main() {
   try {
-    const data = fs.readFileSync("./data/sorted_validators.json", "utf-8");
-    const validators = JSON.parse(data).validators;
-    const validatorAddr1 = validators[0].operator_address;
-    const validatorAddr2 = validators[1].operator_address;
-    const validatorAddr3 = validators[2].operator_address;
+    const data = fs.readFileSync("./data/sorted_collators.json", "utf-8");
+    const collators = JSON.parse(data).collators;
+    const validatorAddr1 = collators[0].operator_address;
+    const validatorAddr2 = collators[1].operator_address;
+    const validatorAddr3 = collators[2].operator_address;
     const validatorAddrs = [validatorAddr1, validatorAddr2, validatorAddr3];
 
     const MultiStaker = await ethers.getContractFactory("MultiStaker");

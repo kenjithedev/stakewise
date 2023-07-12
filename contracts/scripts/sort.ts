@@ -1,17 +1,17 @@
 import fs from "fs";
 
-async function sortValidatorsByTokens() {
+async function sortcollatorsByTokens() {
   try {
     // Read JSON file
-    const data = fs.readFileSync("./data/validators.json", "utf8");
+    const data = fs.readFileSync("./data/collators.json", "utf8");
 
     // Parse JSON data
     const jsonData = JSON.parse(data);
 
-    // Check if the `validators` property exists in the object and it is an array
-    if (Array.isArray(jsonData.validators)) {
-      // Sort the validators array by 'tokens' value in descending order
-      jsonData.validators.sort((a: any, b: any) => {
+    // Check if the `collators` property exists in the object and it is an array
+    if (Array.isArray(jsonData.collators)) {
+      // Sort the collators array by 'tokens' value in descending order
+      jsonData.collators.sort((a: any, b: any) => {
         const tokensA = BigInt(a.tokens);
         const tokensB = BigInt(b.tokens);
 
@@ -26,13 +26,11 @@ async function sortValidatorsByTokens() {
 
       // Write the sorted JSON data to a new file
       fs.writeFileSync(
-        "./data/sorted_validators.json",
+        "./data/sorted_collators.json",
         JSON.stringify(jsonData, null, 2)
       );
     } else {
-      console.log(
-        "The `validators` property does not exist or is not an array"
-      );
+      console.log("The `collators` property does not exist or is not an array");
     }
   } catch (error) {
     console.error(`Error reading or parsing file: ${error}`);
@@ -40,4 +38,4 @@ async function sortValidatorsByTokens() {
 }
 
 // Call the function
-sortValidatorsByTokens();
+sortcollatorsByTokens();

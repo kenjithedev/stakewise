@@ -10,11 +10,11 @@ async function sleep(ms: number) {
 
 async function main() {
   try {
-    const data = fs.readFileSync("./data/sorted_validators.json", "utf-8");
-    const validators = JSON.parse(data).validators;
-    const validatorAddr1 = validators[0].operator_address;
-    const validatorAddr2 = validators[1].operator_address;
-    const validatorAddr3 = validators[2].operator_address;
+    const data = fs.readFileSync("./data/sorted_collators.json", "utf-8");
+    const collators = JSON.parse(data).collators;
+    const validatorAddr1 = collators[0].operator_address;
+    const validatorAddr2 = collators[1].operator_address;
+    const validatorAddr3 = collators[2].operator_address;
     const validatorAddrs = [validatorAddr1, validatorAddr2, validatorAddr3];
 
     const MultiStaker = await ethers.getContractFactory("MultiStaker");
@@ -23,43 +23,25 @@ async function main() {
       process.env.CONTRACT_ADDRESS ?? "" // the address where your contract is deployed
     );
 
-    // Approve required methods
-    await multiStaker.approveAllStakingMethodsWithMaxAmount();
-
-    await sleep(10000); // Sleep for 10 seconds
-
-    // Stake tokens
     const amounts = [
       ethers.utils.parseEther("0.001"),
       ethers.utils.parseEther("0.001"),
       ethers.utils.parseEther("0.001"),
     ];
 
+    // Stake tokens
     let stakeRes = await multiStaker.stakeTokens(validatorAddrs, amounts);
     console.log("Staked tokens, completion times: ", stakeRes);
 
     await sleep(10000); // Sleep for 10 seconds
 
-    // Get delegation
-    const delegation1 = await multiStaker.getDelegation(validatorAddr1);
-    const delegation2 = await multiStaker.getDelegation(validatorAddr2);
-    const delegation3 = await multiStaker.getDelegation(validatorAddr3);
-    console.log(
-      "Delegation 1: ",
-      ethers.utils.formatUnits(delegation1[1][1], 18)
-    );
-    console.log(
-      "Delegation 2: ",
-      ethers.utils.formatUnits(delegation2[1][1], 18)
-    );
-    console.log(
-      "Delegation 3: ",
-      ethers.utils.formatUnits(delegation3[1][1], 18)
-    );
-
-    // Get delegators
-    const delegators = await multiStaker.getDelegatorValidators();
-    console.log("Delegators: ", delegators);
+    // Get delegation amount
+    const delegation1 = await multiStaker.getDelegationAmount(validatorAddr1);
+    const delegation2 = await multiStaker.getDelegationAmount(validatorAddr2);
+    const delegation3 = await multiStaker.getDelegationAmount(validatorAddr3);
+    console.log("Delegation 1: ", ethers.utils.formatUnits(delegation1, 18));
+    console.log("Delegation 2: ", ethers.utils.formatUnits(delegation2, 18));
+    console.log("Delegation 3: ", ethers.utils.formatUnits(delegation3, 18));
   } catch (err) {
     console.error(err);
   }

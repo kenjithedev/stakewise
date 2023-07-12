@@ -10,12 +10,12 @@ async function sleep(ms: number) {
 
 async function main() {
   try {
-    const data = fs.readFileSync("./data/sorted_validators.json", "utf-8");
-    const validators = JSON.parse(data).validators;
-    const validatorAddr = validators[0].operator_address;
-    const validatorSrcAddr = validators[1].operator_address;
-    const validatorDstAddr = validators[2].operator_address;
-    const validatorAddrs = [validatorAddr, validatorSrcAddr, validatorDstAddr];
+    const data = fs.readFileSync("./data/sorted_collators.json", "utf-8");
+    const collators = JSON.parse(data).collators;
+    const validatorAddr = collators[0].operator_address;
+    const collatorsrcAddr = collators[1].operator_address;
+    const validatorDstAddr = collators[2].operator_address;
+    const validatorAddrs = [validatorAddr, collatorsrcAddr, validatorDstAddr];
 
     const MultiStaker = await ethers.getContractFactory("MultiStaker");
 
@@ -32,7 +32,7 @@ async function main() {
 
     // Redelegate tokens
     let redelegateRes = await multiStaker.redelegateTokens(
-      [validatorSrcAddr],
+      [collatorsrcAddr],
       [validatorDstAddr],
       [amounts[0]]
     );

@@ -1,5 +1,5 @@
 {
-  "validators": [
+  "collators": [
     {
       "operator_address": "evmosvaloper10t6kyy4jncvnevmgq6q2ntcy90gse3yxa7x2p4",
       "consensus_pubkey": {
@@ -131,7 +131,7 @@
         "identity": "16DFCF6AF28D699D",
         "website": "https://qubelabs.io",
         "security_contact": "",
-        "details": "Independent organization of validators, builders, network contributors and community builders."
+        "details": "Independent organization of collators, builders, network contributors and community builders."
       },
       "unbonding_height": "14395583",
       "unbonding_time": "2023-05-28T23:15:28.496891444Z",
@@ -274,7 +274,7 @@
       "description": {
         "moniker": "DefierET",
         "identity": "9B3A3C377A37552D",
-        "website": "https://defier.eeldivad.com/evmostest/validators",
+        "website": "https://defier.eeldivad.com/evmostest/collators",
         "security_contact": "admin@defier.net",
         "details": ""
       },
@@ -682,7 +682,7 @@
         "identity": "E2A5772A111FD119",
         "website": "coinbase.com/cloud",
         "security_contact": "security@bisontrails.co",
-        "details": "Coinbase Cloud provides secure and reliable blockchain infrastructure and APIs. Stake your crypto to our enterprise-grade validators."
+        "details": "Coinbase Cloud provides secure and reliable blockchain infrastructure and APIs. Stake your crypto to our enterprise-grade collators."
       },
       "unbonding_height": "9581005",
       "unbonding_time": "2022-12-07T23:38:34.120860721Z",
@@ -1610,7 +1610,7 @@
         "identity": "8E9797A900A7A429",
         "website": "https://pathrocknetwork.org/",
         "security_contact": "",
-        "details": "Secure Non-Custodial Staking for PoS Blockchain Projects. We run reliable and secure validators and nodes of several different blockchain protocols. Come stake with us!"
+        "details": "Secure Non-Custodial Staking for PoS Blockchain Projects. We run reliable and secure collators and nodes of several different blockchain protocols. Come stake with us!"
       },
       "unbonding_height": "1508808",
       "unbonding_time": "2022-06-06T23:07:25.732646097Z",
@@ -2103,7 +2103,7 @@
         "identity": "4A1DED53D477793B",
         "website": "https://stake-take.com/",
         "security_contact": "team7793@stake-take.com",
-        "details": " Trustworthy and high performance validators. Stake with us and Take profit 🚀 "
+        "details": " Trustworthy and high performance collators. Stake with us and Take profit 🚀 "
       },
       "unbonding_height": "974445",
       "unbonding_time": "2022-05-02T00:31:13.465278599Z",

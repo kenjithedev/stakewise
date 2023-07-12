@@ -10,11 +10,11 @@ async function sleep(ms: number) {
 
 async function main() {
   try {
-    const data = fs.readFileSync("./data/sorted_validators.json", "utf-8");
-    const validators = JSON.parse(data).validators;
-    const validatorAddr1 = validators[0].operator_address;
-    const validatorAddr2 = validators[1].operator_address;
-    const validatorAddr3 = validators[2].operator_address;
+    const data = fs.readFileSync("./data/sorted_collators.json", "utf-8");
+    const collators = JSON.parse(data).collators;
+    const validatorAddr1 = collators[0].operator_address;
+    const validatorAddr2 = collators[1].operator_address;
+    const validatorAddr3 = collators[2].operator_address;
     const validatorAddrs = [validatorAddr1, validatorAddr2, validatorAddr3];
 
     const MultiStaker = await ethers.getContractFactory("MultiStaker");
@@ -32,14 +32,14 @@ async function main() {
 
     // Commission Rate Distribution
     // Compute total commission rate
-    let totalCommissionRate = validators.reduce(
+    let totalCommissionRate = collators.reduce(
       (total, validator) =>
         total + parseFloat(validator.commission.commission_rates.rate),
       0
     );
 
     // Compute amounts to stake based on commission rate
-    let amounts = validators.map((validator) =>
+    let amounts = collators.map((validator) =>
       ethers.utils
         .parseEther(tokensToDelegate)
         .mul(parseFloat(validator.commission.commission_rates.rate))
@@ -70,7 +70,7 @@ async function main() {
     );
 
     // Get delegators
-    const delegators = await multiStaker.getDelegatorValidators();
+    const delegators = await multiStaker.getDelegatorcollators();
     console.log("Delegators: ", delegators);
   } catch (err) {
     console.error(err);
